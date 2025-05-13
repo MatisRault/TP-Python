@@ -41,7 +41,7 @@ L'utilisation de Neo4j est particulièrement pertinente pour les réseaux sociau
 1. **Cloner le dépôt**
 
 ```bash
-git clone https://github.com/votre-nom-utilisateur/neo4j-flask-api.git
+git clone https://github.com/MatisRault/TP-Python.git
 cd neo4j-flask-api
 ```
 
@@ -72,15 +72,7 @@ docker-compose up -d
 
 ## Configuration
 
-Créez un fichier `.env` à la racine du projet avec le contenu suivant (ou modifiez celui existant) :
-
-```
-NEO4J_URI=bolt://localhost:7687
-NEO4J_USER=neo4j
-NEO4J_PASSWORD=password
-SECRET_KEY=votre_cle_secrete_ici
-DEBUG=True
-```
+Voir le fichier `.env` à la racine du projet.
 
 ## Utilisation
 
@@ -237,7 +229,7 @@ Vous pouvez accéder à l'interface web de Neo4j pour visualiser et interagir av
 
 - URL : `http://localhost:7474`
 - Identifiant : `neo4j`
-- Mot de passe : `password` (ou celui configuré dans votre .env)
+- Mot de passe : `password` (ou celui configuré dans le .env)
 
 ### Exemples de requêtes Cypher
 
@@ -265,4 +257,3 @@ RETURN u
 
 ---
 
-Développé dans le cadre d'un TP sur Neo4j et Flask.
