@@ -10,7 +10,6 @@ def init_db():
     """Initialise la base de données avec des données de test"""
     print("Initialisation de la base de données avec des données de test...")
     
-    # Réinitialiser la base de données
     query = """
     MATCH (n)
     DETACH DELETE n
@@ -18,7 +17,6 @@ def init_db():
     db.run(query)
     print("Base de données réinitialisée.")
     
-    # Créer des utilisateurs
     alice = User(name="Alice Martin", email="alice@example.com")
     bob = User(name="Bob Dupont", email="bob@example.com")
     charlie = User(name="Charlie Garcia", email="charlie@example.com")
@@ -34,17 +32,15 @@ def init_db():
     
     print(f"Utilisateurs créés: {alice.id}, {bob.id}, {charlie.id}, {dave.id}, {eve.id}")
     
-    # Créer des relations d'amitié
     alice.add_friend(bob.id)
     alice.add_friend(charlie.id)
     bob.add_friend(dave.id)
     charlie.add_friend(eve.id)
     dave.add_friend(eve.id)
-    bob.add_friend(charlie.id)  # Pour les amis en commun avec Alice
-    
+    bob.add_friend(charlie.id)  
+
     print("Relations d'amitié créées.")
     
-    # Créer des posts
     post1 = Post(
         title="Introduction à Neo4j", 
         content="Neo4j est une base de données orientée graphe très puissante pour modéliser des relations complexes.", 
@@ -61,14 +57,12 @@ def init_db():
         user_id=charlie.id
     )
     
-    # Enregistrer les posts
     post1.save()
     post2.save()
     post3.save()
     
     print(f"Posts créés: {post1.id}, {post2.id}, {post3.id}")
     
-    # Créer des commentaires
     comment1 = Comment(
         content="Super article sur Neo4j ! J'ai beaucoup appris.", 
         user_id=bob.id, 
@@ -90,7 +84,6 @@ def init_db():
         post_id=post1.id
     )
     
-    # Enregistrer les commentaires
     comment1.save()
     comment2.save()
     comment3.save()
@@ -98,7 +91,6 @@ def init_db():
     
     print(f"Commentaires créés: {comment1.id}, {comment2.id}, {comment3.id}, {comment4.id}")
     
-    # Ajouter des likes aux posts
     post1.like(bob.id)
     post1.like(charlie.id)
     post1.like(dave.id)
@@ -111,7 +103,6 @@ def init_db():
     
     print("Likes ajoutés aux posts.")
     
-    # Ajouter des likes aux commentaires
     comment1.like(alice.id)
     comment1.like(charlie.id)
     comment2.like(bob.id)
