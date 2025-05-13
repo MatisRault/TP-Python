@@ -52,7 +52,7 @@ class Post:
         
         # Créer la relation entre l'utilisateur et le post s'il s'agit d'un nouveau post
         query = """
-        MATCH (u:User {id: }), (p:Post {id: })
+        MATCH (u:User {id: $user_id}), (p:Post {id: $post_id})
         MERGE (u)-[r:CREATED]->(p)
         RETURN r
         """
@@ -64,7 +64,7 @@ class Post:
     def find_by_id(post_id):
         """Trouve un post par son ID"""
         query = """
-        MATCH (p:Post {id: })
+        MATCH (p:Post {id: $post_id})
         OPTIONAL MATCH (u:User)-[:CREATED]->(p)
         RETURN p, u.id as user_id
         """
@@ -95,7 +95,7 @@ class Post:
     def find_by_user(user_id):
         """Récupère tous les posts d'un utilisateur"""
         query = """
-        MATCH (u:User {id: })-[:CREATED]->(p:Post)
+        MATCH (u:User {id: $user_id})-[:CREATED]->(p:Post)
         RETURN p
         ORDER BY p.created_at DESC
         """
@@ -111,7 +111,7 @@ class Post:
     def delete(post_id):
         """Supprime un post et toutes ses relations"""
         query = """
-        MATCH (p:Post {id: })
+        MATCH (p:Post {id: $post_id})
         OPTIONAL MATCH (p)-[r]-()
         DELETE r, p
         """
@@ -121,7 +121,7 @@ class Post:
     def like(self, user_id):
         """Ajoute un like à un post"""
         query = """
-        MATCH (u:User {id: }), (p:Post {id: })
+        MATCH (u:User {id: $user_id}), (p:Post {id: $post_id})
         MERGE (u)-[r:LIKES]->(p)
         RETURN r
         """
@@ -131,7 +131,7 @@ class Post:
     def unlike(self, user_id):
         """Retire un like d'un post"""
         query = """
-        MATCH (u:User {id: })-[r:LIKES]->(p:Post {id: })
+        MATCH (u:User {id: $user_id})-[r:LIKES]->(p:Post {id: $post_id})
         DELETE r
         """
         db.run(query, user_id=user_id, post_id=self.id)
@@ -140,7 +140,7 @@ class Post:
     def get_likes_count(self):
         """Récupère le nombre de likes d'un post"""
         query = """
-        MATCH (u:User)-[:LIKES]->(p:Post {id: })
+        MATCH (u:User)-[:LIKES]->(p:Post {id: $post_id})
         RETURN count(u) as likes_count
         """
         result = db.run(query, post_id=self.id).data()
@@ -149,7 +149,7 @@ class Post:
     def get_liked_by(self):
         """Récupère les utilisateurs qui ont aimé ce post"""
         query = """
-        MATCH (u:User)-[:LIKES]->(p:Post {id: })
+        MATCH (u:User)-[:LIKES]->(p:Post {id: $post_id})
         RETURN u
         """
         results = db.run(query, post_id=self.id).data()

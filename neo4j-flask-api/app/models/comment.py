@@ -56,7 +56,7 @@ class Comment:
         
         # Créer les relations entre l'utilisateur, le post et le commentaire
         query = """
-        MATCH (u:User {id: }), (p:Post {id: }), (c:Comment {id: })
+        MATCH (u:User {id: $user_id}), (p:Post {id: $post_id}), (c:Comment {id: $comment_id})
         MERGE (u)-[r1:CREATED]->(c)
         MERGE (p)-[r2:HAS_COMMENT]->(c)
         RETURN r1, r2
@@ -69,7 +69,7 @@ class Comment:
     def find_by_id(comment_id):
         """Trouve un commentaire par son ID"""
         query = """
-        MATCH (c:Comment {id: })
+        MATCH (c:Comment {id: $comment_id})
         OPTIONAL MATCH (u:User)-[:CREATED]->(c)
         OPTIONAL MATCH (p:Post)-[:HAS_COMMENT]->(c)
         RETURN c, u.id as user_id, p.id as post_id
@@ -103,7 +103,7 @@ class Comment:
     def find_by_post(post_id):
         """Récupère tous les commentaires d'un post"""
         query = """
-        MATCH (p:Post {id: })-[:HAS_COMMENT]->(c:Comment)
+        MATCH (p:Post {id: $post_id})-[:HAS_COMMENT]->(c:Comment)
         MATCH (u:User)-[:CREATED]->(c)
         RETURN c, u.id as user_id
         ORDER BY c.created_at DESC
@@ -121,7 +121,7 @@ class Comment:
     def delete(comment_id):
         """Supprime un commentaire et toutes ses relations"""
         query = """
-        MATCH (c:Comment {id: })
+        MATCH (c:Comment {id: $comment_id})
         OPTIONAL MATCH (c)-[r]-()
         DELETE r, c
         """
@@ -131,7 +131,7 @@ class Comment:
     def like(self, user_id):
         """Ajoute un like à un commentaire"""
         query = """
-        MATCH (u:User {id: }), (c:Comment {id: })
+        MATCH (u:User {id: $user_id}), (c:Comment {id: $comment_id})
         MERGE (u)-[r:LIKES]->(c)
         RETURN r
         """
@@ -141,7 +141,7 @@ class Comment:
     def unlike(self, user_id):
         """Retire un like d'un commentaire"""
         query = """
-        MATCH (u:User {id: })-[r:LIKES]->(c:Comment {id: })
+        MATCH (u:User {id: $user_id})-[r:LIKES]->(c:Comment {id: $comment_id})
         DELETE r
         """
         db.run(query, user_id=user_id, comment_id=self.id)
@@ -150,7 +150,7 @@ class Comment:
     def get_likes_count(self):
         """Récupère le nombre de likes d'un commentaire"""
         query = """
-        MATCH (u:User)-[:LIKES]->(c:Comment {id: })
+        MATCH (u:User)-[:LIKES]->(c:Comment {id: $comment_id})
         RETURN count(u) as likes_count
         """
         result = db.run(query, comment_id=self.id).data()

@@ -44,7 +44,7 @@ class User:
     def find_by_id(user_id):
         """Trouve un utilisateur par son ID"""
         query = """
-        MATCH (u:User {id: })
+        MATCH (u:User {id: $user_id})
         RETURN u
         """
         result = db.run(query, user_id=user_id).data()
@@ -67,7 +67,7 @@ class User:
     def delete(user_id):
         """Supprime un utilisateur et toutes ses relations"""
         query = """
-        MATCH (u:User {id: })
+        MATCH (u:User {id: $user_id})
         OPTIONAL MATCH (u)-[r]-()
         DELETE r, u
         """
@@ -77,7 +77,7 @@ class User:
     def add_friend(self, friend_id):
         """Ajoute une relation d'amitié avec un autre utilisateur"""
         query = """
-        MATCH (u1:User {id: }), (u2:User {id: })
+        MATCH (u1:User {id: $user_id}), (u2:User {id: $friend_id})
         MERGE (u1)-[r:FRIENDS_WITH]->(u2)
         RETURN r
         """
@@ -87,7 +87,7 @@ class User:
     def remove_friend(self, friend_id):
         """Supprime une relation d'amitié"""
         query = """
-        MATCH (u1:User {id: })-[r:FRIENDS_WITH]-(u2:User {id: })
+        MATCH (u1:User {id: $user_id})-[r:FRIENDS_WITH]-(u2:User {id: $friend_id})
         DELETE r
         """
         db.run(query, user_id=self.id, friend_id=friend_id)
@@ -96,7 +96,7 @@ class User:
     def get_friends(self):
         """Récupère la liste des amis de l'utilisateur"""
         query = """
-        MATCH (u:User {id: })-[:FRIENDS_WITH]-(friend:User)
+        MATCH (u:User {id: $user_id})-[:FRIENDS_WITH]-(friend:User)
         RETURN friend
         """
         results = db.run(query, user_id=self.id).data()
@@ -106,7 +106,7 @@ class User:
     def check_friendship(user_id, friend_id):
         """Vérifie si deux utilisateurs sont amis"""
         query = """
-        MATCH (u1:User {id: })-[r:FRIENDS_WITH]-(u2:User {id: })
+        MATCH (u1:User {id: $user_id})-[r:FRIENDS_WITH]-(u2:User {id: $friend_id})
         RETURN r
         """
         result = db.run(query, user_id=user_id, friend_id=friend_id).data()
@@ -116,7 +116,7 @@ class User:
     def get_mutual_friends(user_id, other_id):
         """Récupère les amis en commun entre deux utilisateurs"""
         query = """
-        MATCH (u1:User {id: })-[:FRIENDS_WITH]-(mutual:User)-[:FRIENDS_WITH]-(u2:User {id: })
+        MATCH (u1:User {id: $user_id})-[:FRIENDS_WITH]-(mutual:User)-[:FRIENDS_WITH]-(u2:User {id: $other_id})
         RETURN mutual
         """
         results = db.run(query, user_id=user_id, other_id=other_id).data()

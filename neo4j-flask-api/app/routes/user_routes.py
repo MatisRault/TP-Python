@@ -242,7 +242,6 @@ def remove_friend(user_id, friend_id):
             'status': 'error',
             'message': str(e)
         }), 500
-
 @user_bp.route('/<user_id>/friends/<friend_id>', methods=['GET'])
 def check_friendship(user_id, friend_id):
     """Route pour vérifier si deux utilisateurs sont amis"""
@@ -269,12 +268,13 @@ def check_friendship(user_id, friend_id):
         return jsonify({
             'status': 'success',
             'are_friends': are_friends
-        }), 200 except Exception as e:
+        }), 200
+    except Exception as e:
         return jsonify({
             'status': 'error',
             'message': str(e)
         }), 500
-
+    
 @user_bp.route('/<user_id>/mutual-friends/<other_id>', methods=['GET'])
 def get_mutual_friends(user_id, other_id):
     """Route pour récupérer les amis en commun"""
